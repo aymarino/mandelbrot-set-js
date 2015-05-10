@@ -16,7 +16,7 @@ var y_f = 1.0;
 drawMandelbrotSet();
 
 function drawMandelbrotSet() {
-  var MAX_ITER = 50;
+  var MAX_ITER = 256;
 
   var dx = (x_f - x_i) / CANVAS_ELEMENT.width;
   var dy = (y_f - y_i) / CANVAS_ELEMENT.height;
@@ -30,16 +30,18 @@ function drawMandelbrotSet() {
       var y = 0;
       var iter = 0;
 
-      while (iter < MAX_ITER && x*x + y*y <= 4) {
+      while (x*x + y*y <= 4 && iter < MAX_ITER) {
         var xTemp = x * x - y * y + i;
         y = 2 * x * y + j;
         x = xTemp;
         iter++;
       }
 
-      if (iter == MAX_ITER) CANVAS.fillStyle = "#000000";
+      if (iter == MAX_ITER) CANVAS.fillStyle = "#FF0000";
       else {
-        CANVAS.fillStyle = "#" + (iter % 16 * 0x100000).toString(16);
+        var redComp = iter.toString(16);
+        if (redComp.length == 1) redComp = "0" + redComp;
+        CANVAS.fillStyle = "#" + redComp + "0000";
       }
 
       CANVAS.fillRect(xCoord, yCoord, 1, 1);
