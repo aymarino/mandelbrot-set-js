@@ -37,11 +37,12 @@ function drawMandelbrotSet() {
         iter++;
       }
 
-      if (iter == MAX_ITER) CANVAS.fillStyle = "#FF0000";
+      if (iter == MAX_ITER) CANVAS.fillStyle = "#00FF00";
       else {
-        var redComp = iter.toString(16);
-        if (redComp.length == 1) redComp = "0" + redComp;
-        CANVAS.fillStyle = "#" + redComp + "0000";
+        var singleColorComponent = iter.toString(16);
+        if (singleColorComponent.length == 1)
+          singleColorComponent = "0" + singleColorComponent;
+        CANVAS.fillStyle = "#00" + singleColorComponent + "00"; // Green
       }
 
       CANVAS.fillRect(xCoord, yCoord, 1, 1);
