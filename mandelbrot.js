@@ -2,7 +2,7 @@ var CANVAS_ELEMENT = document.getElementById("plot");
 var CANVAS = CANVAS_ELEMENT.getContext("2d");
 
 CANVAS_ELEMENT.width = window.innerWidth;
-CANVAS_ELEMENT.height = CANVAS_ELEMENT.width/2;
+CANVAS_ELEMENT.height = window.innerHeight;
 
 CANVAS_ELEMENT.addEventListener("mousedown", onClickEvent, false);
 
@@ -10,8 +10,8 @@ var clickMagnification = 10.0;
 
 var x_i = -2.5;
 var x_f = 1.5;
-var y_i = -1.0;
 var y_f = 1.0;
+var y_i = y_f - (x_f - x_i) / CANVAS_ELEMENT.width * CANVAS_ELEMENT.height;
 
 drawMandelbrotSet();
 
