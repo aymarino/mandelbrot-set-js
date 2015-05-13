@@ -6,25 +6,56 @@ CANVAS_ELEMENT.height = window.innerHeight;
 
 CANVAS_ELEMENT.addEventListener("mousedown", onClickEvent, false);
 
-var clickMagnification = 10.0;
+var CLICK_MAG = 10.0;
+var MAX_ITER = 256;
 
-var x_i = -2.5;
-var x_f = 1.5;
-var y_f = 1.0;
-var y_i = y_f - (x_f - x_i) / CANVAS_ELEMENT.width * CANVAS_ELEMENT.height;
+var Dim = function(min_in, max_in, px_in) {
+  this.min = min_in;
+  this.max = max_in;
+  this.numPixels = px_in;
+};
+
+Dim.prototype.getDelta = function() {
+  return (this.max - this.min) / this.numPixels; 
+}
+
+Dim.prototype.matchResolution = function (otherDim) {
+ this.min =
+  this.max - (otherDim.max - otherDim.min) / otherDim.numPixels * this.numPixels;
+}
+
+Dim.prototype.magnify = function (eventPx) {
+  var currentRange = this.max - this.min;
+  var newRange = currentRange / CLICK_MAG;
+  var clickCoord = this.min + currentRange / this.numPixels * eventPx;
+
+  this.min = clickCoord - newRange / 2.0;
+  this.max = clickCoord + newRange / 2.0;
+}
+
+var X_dim = new Dim(-2.5, 1.5, CANVAS_ELEMENT.width);
+var Y_dim = new Dim(-1.0, 1.0, CANVAS_ELEMENT.height);
+Y_dim.matchResolution(X_dim);
 
 drawMandelbrotSet();
 
-function drawMandelbrotSet() {
-  var MAX_ITER = 256;
+function onClickEvent() {
+  X_dim.magnify(event.pageX);
+  Y_dim.magnify(event.pageY);
+  
+  console.log("x_i: " + X_dim.min + " x_f: " + X_dim.max + " Y_dim.min: " + Y_dim.min + " y_f: " + Y_dim.max);
 
-  var dx = (x_f - x_i) / CANVAS_ELEMENT.width;
-  var dy = (y_f - y_i) / CANVAS_ELEMENT.height;
+  drawMandelbrotSet();
+}
+
+function drawMandelbrotSet() {
+  var dx = X_dim.getDelta();
+  var dy = Y_dim.getDelta();
 
   var xCoord = 0;
-  for (var i = x_i; i < x_f; i += dx) {
+  for (var i = X_dim.min; i < X_dim.max; i += dx) {
     var yCoord = 0;
-    for (var j = y_i; j < y_f; j += dy) {
+    for (var j = Y_dim.min; j < Y_dim.max; j += dy) {
 
       var x = 0;
       var y = 0;
@@ -53,23 +84,3 @@ function drawMandelbrotSet() {
   }
 }
 
-function onClickEvent() {
-  var cur_x_range = x_f - x_i;
-  var cur_y_range = y_f - y_i;
-
-  var new_x_range = cur_x_range / clickMagnification;
-  var new_y_range = cur_y_range / clickMagnification;
-
-  var click_x = x_i + cur_x_range / CANVAS_ELEMENT.width * event.pageX;
-  var click_y = y_i + cur_y_range / CANVAS_ELEMENT.height * event.pageY;
-
-  x_i = click_x - new_x_range / 2.0;
-  x_f = click_x + new_x_range / 2.0;
-
-  y_i = click_y - new_y_range / 2.0;
-  y_f = click_y + new_y_range / 2.0;
-
-  console.log("x_i: " + x_i + " x_f: " + x_f + " y_i: " + y_i + " y_f: " + y_f);
-
-  drawMandelbrotSet();
-}
