@@ -4,7 +4,12 @@ var CANVAS = CANVAS_ELEMENT.getContext("2d");
 CANVAS_ELEMENT.width = window.innerWidth;
 CANVAS_ELEMENT.height = window.innerHeight;
 
+CANVAS_STACK = [];
+X_DIM_STACK = [];
+Y_DIM_STACK = [];
+
 CANVAS_ELEMENT.addEventListener("mousedown", onClickEvent, false);
+window.addEventListener("keydown", onKeypress, false);
 
 var CLICK_MAG = 10.0;
 var MAX_ITER = 256;
@@ -40,12 +45,30 @@ Y_dim.matchResolution(X_dim);
 drawMandelbrotSet();
 
 function onClickEvent() {
+  CANVAS_STACK.push(CANVAS.getImageData(0, 0, CANVAS_ELEMENT.width, CANVAS_ELEMENT.height));
+
+  var newDimX = new Dim(X_dim.min, X_dim.max, CANVAS_ELEMENT.width);
+  var newDimY = new Dim(Y_dim.min, Y_dim.max, CANVAS_ELEMENT.height);
+  X_DIM_STACK.push(newDimX);
+  Y_DIM_STACK.push(newDimY);
+
   X_dim.magnify(event.pageX);
   Y_dim.magnify(event.pageY);
   
-  console.log("x_i: " + X_dim.min + " x_f: " + X_dim.max + " Y_dim.min: " + Y_dim.min + " y_f: " + Y_dim.max);
+  //console.log("x_i: " + X_dim.min + " x_f: " + X_dim.max + " Y_dim.min: " + Y_dim.min + " y_f: " + Y_dim.max);
 
   drawMandelbrotSet();
+}
+
+function onKeypress(event) {
+  if (event.keyCode == "8" && CANVAS_STACK.length > 0) {
+    CANVAS.putImageData(CANVAS_STACK.pop(), 0, 0);
+    X_dim = X_DIM_STACK.pop();
+    Y_dim = Y_DIM_STACK.pop();
+    
+    event.preventDefault();
+  }
+  else if (event.keyCode == "8") event.preventDefault();
 }
 
 function drawMandelbrotSet() {
