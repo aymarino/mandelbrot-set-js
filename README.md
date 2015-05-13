@@ -1,6 +1,6 @@
 # Mandelbrot Set
 
-**Now hosted [here](http://aymarino.github.io/mandelbrot-set-js/).**
+**Now hosted [here](http://aymarino.github.io/mandelbrot-set-js/) -- click to zoom, backspace to return to previous zoom level.**
 
 * The [Mandelbrot Set](http://en.wikipedia.org/wiki/Mandelbrot_set) is a fractal that produces fascinating patterns when plotted and colored. This is a simple script that draws an interactive Mandelbrot set on an HTML5 Canvas that zooms in on clicked areas.
 
