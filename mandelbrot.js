@@ -25,8 +25,13 @@ Dim.prototype.getDelta = function() {
 }
 
 Dim.prototype.matchResolution = function (otherDim) {
- this.min =
-  this.max - (otherDim.max - otherDim.min) / otherDim.numPixels * this.numPixels;
+  this.min =
+    this.max - (otherDim.max - otherDim.min) / otherDim.numPixels * this.numPixels;
+  var diff = Math.abs(this.min) - Math.abs(this.max);
+  if (diff != 0) {
+    this.min += diff/2.0;
+    this.max += diff/2.0;
+  }
 }
 
 Dim.prototype.magnify = function (eventPx) {
