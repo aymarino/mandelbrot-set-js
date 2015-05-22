@@ -80,12 +80,16 @@ function callDraw() {
   var X_granularity = X_dim.numPixels;
   var Y_granularity = Y_dim.numPixels;
 
-  while (X_granularity > 1 && Y_granularity > 1) {
-    drawMandelbrotSet(X_granularity, Y_granularity);
-    X_granularity /= 2; Y_granularity /= 2;
-  }
-
-  drawMandelbrotSet(1, 1);
+  var DRAW_Interval = setInterval(function() {
+    if (X_granularity > 1 && Y_granularity > 1) {
+      drawMandelbrotSet(X_granularity, Y_granularity);
+      X_granularity /= 2; Y_granularity /= 2;
+    }
+    else {
+      clearInterval(DRAW_Interval);
+      drawMandelbrotSet(1, 1);
+    }
+  }, 100);
 }
 
 function drawMandelbrotSet(X_granularity_in, Y_granularity_in) {
