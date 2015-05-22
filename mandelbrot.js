@@ -20,8 +20,8 @@ var Dim = function(min_in, max_in, px_in) {
   this.numPixels = px_in;
 };
 
-Dim.prototype.getDelta = function() {
-  return (this.max - this.min) / this.numPixels; 
+Dim.prototype.getDelta = function(granularity) {
+  return (this.max - this.min) / this.numPixels * granularity;
 }
 
 Dim.prototype.matchResolution = function (otherDim) {
@@ -47,7 +47,7 @@ var X_dim = new Dim(-2.5, 1.5, CANVAS_ELEMENT.width);
 var Y_dim = new Dim(-1.0, 1.0, CANVAS_ELEMENT.height);
 Y_dim.matchResolution(X_dim);
 
-drawMandelbrotSet();
+callDraw();
 
 function onClickEvent() {
   CANVAS_STACK.push(CANVAS.getImageData(0, 0, CANVAS_ELEMENT.width, CANVAS_ELEMENT.height));
@@ -62,7 +62,7 @@ function onClickEvent() {
   
   //console.log("x_i: " + X_dim.min + " x_f: " + X_dim.max + " Y_dim.min: " + Y_dim.min + " y_f: " + Y_dim.max);
 
-  drawMandelbrotSet();
+  callDraw();
 }
 
 function onKeypress(event) {
@@ -76,9 +76,24 @@ function onKeypress(event) {
   else if (event.keyCode == "8") event.preventDefault();
 }
 
-function drawMandelbrotSet() {
-  var dx = X_dim.getDelta();
-  var dy = Y_dim.getDelta();
+function callDraw() {
+  var X_granularity = X_dim.numPixels;
+  var Y_granularity = Y_dim.numPixels;
+
+  while (X_granularity > 1 && Y_granularity > 1) {
+    drawMandelbrotSet(X_granularity, Y_granularity);
+    X_granularity /= 2; Y_granularity /= 2;
+  }
+
+  drawMandelbrotSet(1, 1);
+}
+
+function drawMandelbrotSet(X_granularity_in, Y_granularity_in) {
+  var dx = X_dim.getDelta(X_granularity_in);
+  var dy = Y_dim.getDelta(Y_granularity_in);
+
+  var dPixX = X_granularity_in;
+  var dPixY = Y_granularity_in;
 
   var xCoord = 0;
   for (var i = X_dim.min; i < X_dim.max; i += dx) {
@@ -104,11 +119,11 @@ function drawMandelbrotSet() {
         CANVAS.fillStyle = "#00" + singleColorComponent + "00"; // Green
       }
 
-      CANVAS.fillRect(xCoord, yCoord, 1, 1);
+      CANVAS.fillRect(xCoord, yCoord, X_granularity_in, Y_granularity_in);
 
-      yCoord++;
+      yCoord += Y_granularity_in;
     }
-    xCoord++;
+    xCoord += X_granularity_in;
   }
 }
 
