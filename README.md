@@ -6,5 +6,5 @@
 
 ### To Do
 * Use arbitrary precision in coordinates and calculations so as to not limit the resolution at higher magnifications.
-* Use approximation techniques to speed up the drawing process.
+* ~~Use approximation techniques to speed up the drawing process.~~
 * Refine coloring scheme

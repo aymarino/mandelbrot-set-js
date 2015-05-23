@@ -96,9 +96,6 @@ function drawMandelbrotSet(X_granularity_in, Y_granularity_in) {
   var dx = X_dim.getDelta(X_granularity_in);
   var dy = Y_dim.getDelta(Y_granularity_in);
 
-  var dPixX = X_granularity_in;
-  var dPixY = Y_granularity_in;
-
   var xCoord = 0;
   for (var i = X_dim.min; i < X_dim.max; i += dx) {
     var yCoord = 0;
