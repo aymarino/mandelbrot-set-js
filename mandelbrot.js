@@ -1,18 +1,15 @@
-var CANVAS_ELEMENT = document.getElementById("plot");
-var CANVAS = CANVAS_ELEMENT.getContext("2d");
-
-CANVAS_ELEMENT.width = window.innerWidth;
-CANVAS_ELEMENT.height = window.innerHeight;
-
-CANVAS_STACK = [];
-X_DIM_STACK = [];
-Y_DIM_STACK = [];
-
-CANVAS_ELEMENT.addEventListener("mousedown", onClickEvent, false);
-window.addEventListener("keydown", onKeypress, false);
-
 var CLICK_MAG = 10.0;
 var MAX_ITER = 256;
+
+var CANVAS_ELEMENT;
+var CANVAS;
+
+var CANVAS_STACK = [];
+var X_DIM_STACK = [];
+var Y_DIM_STACK = [];
+
+var X_dim;
+var Y_dim;
 
 var Dim = function(min_in, max_in, px_in) {
   this.min = min_in;
@@ -43,14 +40,27 @@ Dim.prototype.magnify = function (eventPx) {
   this.max = clickCoord + newRange / 2.0;
 }
 
-var X_dim = new Dim(-2.5, 1.5, CANVAS_ELEMENT.width);
-var Y_dim = new Dim(-1.0, 1.0, CANVAS_ELEMENT.height);
-Y_dim.matchResolution(X_dim);
+function init() {
+  CANVAS_ELEMENT = document.getElementById("plot");
+  CANVAS = CANVAS_ELEMENT.getContext("2d");
 
-callDraw();
+  CANVAS_ELEMENT.width = window.innerWidth;
+  CANVAS_ELEMENT.height = window.innerHeight;
+
+  CANVAS_ELEMENT.addEventListener("mousedown", onClickEvent, false);
+  window.addEventListener("keydown", onKeypress, false);
+
+  X_dim = new Dim(-2.5, 1.5, CANVAS_ELEMENT.width);
+  Y_dim = new Dim(-1.0, 1.0, CANVAS_ELEMENT.height);
+  Y_dim.matchResolution(X_dim);
+
+  callDraw();
+}
 
 function onClickEvent() {
-  CANVAS_STACK.push(CANVAS.getImageData(0, 0, CANVAS_ELEMENT.width, CANVAS_ELEMENT.height));
+  CANVAS_STACK.push(
+    CANVAS.getImageData(0, 0, CANVAS_ELEMENT.width, CANVAS_ELEMENT.height)
+  );
 
   var newDimX = new Dim(X_dim.min, X_dim.max, CANVAS_ELEMENT.width);
   var newDimY = new Dim(Y_dim.min, Y_dim.max, CANVAS_ELEMENT.height);
@@ -60,8 +70,6 @@ function onClickEvent() {
   X_dim.magnify(event.pageX);
   Y_dim.magnify(event.pageY);
   
-  //console.log("x_i: " + X_dim.min + " x_f: " + X_dim.max + " Y_dim.min: " + Y_dim.min + " y_f: " + Y_dim.max);
-
   callDraw();
 }
 
